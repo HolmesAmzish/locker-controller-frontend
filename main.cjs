@@ -6,8 +6,8 @@ let mainWindow;
 const createWindow = () => {
     mainWindow = new BrowserWindow({
         title: "智能快递柜控制面板",
-        width: 800,
-        height: 600,
+        width: 1000,
+        height: 1200,
         webPreferences: {
             nodeIntegration: true,
             enableBlinkFeatures: true,
@@ -18,7 +18,8 @@ const createWindow = () => {
     const url=isDev? "http://localhost:5173": "http://localhost:5173";
     mainWindow.loadURL(url);
 
-    isDev&& mainWindow.webContents.openDevTools();
+    // Uncomment the line below to open DevTools in development mode
+    // isDev&& mainWindow.webContents.openDevTools();
     mainWindow.once("ready-to-show", () => {
         mainWindow.show();
     });

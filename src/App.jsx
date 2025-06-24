@@ -62,15 +62,14 @@ function App() {
     }
   }, [])
 
+  const [activeTab, setActiveTab] = useState('control')
+
   if (loading) return <div className="loading">正在连接实时服务器...</div>
   if (error) return <div className="error">错误: {error}</div>
-
-  const [activeTab, setActiveTab] = useState('control')
+  if (!status) return <div className="loading">正在加载初始数据...</div>
 
   return (
     <div className="app">
-      <h1 className="title">智能快递柜控制面板</h1>
-      
       <div className="tabs mb-6">
         <button
           className={`tab-button ${activeTab === 'control' ? 'active' : ''}`}
