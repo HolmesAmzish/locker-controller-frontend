@@ -80,6 +80,27 @@ export default function ControlsPanel({ status }) {
     }
   }
 
+  const [deviationInput, setDeviationInput] = useState('')
+  const handleSetDeviation = async (e) => {
+    e.preventDefault()
+    if (!deviationInput) return
+    
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/temperature/deviation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ deviation: parseFloat(deviationInput) })
+      })
+      if (!response.ok) throw new Error('设置温度偏差失败')
+      setDeviationInput('')
+    } catch (err) {
+      alert(err.message)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
   return (
     <div className="controls-panel bg-white rounded-lg shadow p-6">
       <h2 className="text-xl font-semibold mb-4">控制面板</h2>
@@ -170,6 +191,30 @@ export default function ControlsPanel({ status }) {
               禁用
             </button>
           </div>
+        </div>
+
+        {/* Temperature Deviation Control */}
+        <div className="bg-gray-50 p-4 rounded">
+          <h3 className="font-medium text-gray-500 mb-2">设置温度偏差</h3>
+          <form onSubmit={handleSetDeviation} className="flex gap-2">
+            <input
+              type="number"
+              step="0.5"
+              min="0"
+              max="10"
+              value={deviationInput}
+              onChange={(e) => setDeviationInput(e.target.value)}
+              className="flex-1 p-2 border rounded"
+              placeholder="输入温度偏差值"
+            />
+            <button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 disabled:bg-green-300"
+            >
+              {isSubmitting ? '设置中...' : '设置'}
+            </button>
+          </form>
         </div>
       </div>
     </div>

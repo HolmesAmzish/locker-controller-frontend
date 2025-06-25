@@ -3,6 +3,7 @@ import { io } from 'socket.io-client'
 import StatusPanel from './components/StatusPanel'
 import ControlsPanel from './components/ControlsPanel'
 import TemperatureChart from './components/TemperatureChart'
+import SystemSettingsPanel from './components/SystemSettingsPanel'
 import DataViewPanel from './components/DataViewPanel'
 import './App.css'
 
@@ -62,41 +63,24 @@ function App() {
     }
   }, [])
 
-  const [activeTab, setActiveTab] = useState('control')
-
   if (loading) return <div className="loading">正在连接实时服务器...</div>
   if (error) return <div className="error">错误: {error}</div>
   if (!status) return <div className="loading">正在加载初始数据...</div>
 
   return (
     <div className="app">
-      <div className="tabs mb-6">
-        <button
-          className={`tab-button ${activeTab === 'control' ? 'active' : ''}`}
-          onClick={() => setActiveTab('control')}
-        >
-          控制面板
-        </button>
-        <button
-          className={`tab-button ${activeTab === 'data' ? 'active' : ''}`}
-          onClick={() => setActiveTab('data')}
-        >
-          详细数据
-        </button>
+      <StatusPanel status={status} />
+      <ControlsPanel status={status} />
+      <div className="chart-container mt-6 p-4 bg-white rounded-lg shadow">
+        <h2 className="text-xl font-semibold mb-4">温度变化历史</h2>
+        <TemperatureChart temperatureHistory={temperatureHistory} />
       </div>
-
-      {activeTab === 'control' ? (
-        <>
-          <StatusPanel status={status} />
-          <ControlsPanel status={status} />
-          <div className="chart-container mt-6 p-4 bg-white rounded-lg shadow">
-            <h2 className="text-xl font-semibold mb-4">温度变化历史</h2>
-            <TemperatureChart temperatureHistory={temperatureHistory} />
-          </div>
-        </>
-      ) : (
+      <div className="mt-6 p-4 bg-white rounded-lg shadow">
+        <SystemSettingsPanel onUpdate={() => socket.emit('request_status')} />
+      </div>
+      <div className="mt-6">
         <DataViewPanel data={status} />
-      )}
+      </div>
     </div>
   )
 }
